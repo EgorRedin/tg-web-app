@@ -14,7 +14,7 @@ function MainPage()
 
     const navigateToTg = () =>
     {
-
+               
     }
     
     return(
