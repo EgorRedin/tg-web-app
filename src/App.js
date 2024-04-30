@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import MainPage from './pages/mainPage';
+import BoostPage from './pages/boostPage';
+import TradePage from './pages/tradePage';
+import "./styles/App.css"
+
+
 
 function App() {
+
+  const tg = window.Telegram.WebApp
+  useEffect(() =>
+  {
+    tg.ready();
+    console.log("Что это за дерьмо");
+  }
+  , [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainPage/>}/>
+        <Route path='/boost' element={<BoostPage/>}/>
+        <Route path='/trade' element={<TradePage/>}/>
+      </Routes>
+    </Router>
   );
 }
 

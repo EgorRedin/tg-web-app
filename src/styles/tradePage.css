@@ -1,0 +1,74 @@
+.trade-container
+{
+    display: flex;
+    flex-direction: column;
+    background-color: black;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.trade-header
+{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10vh;
+}
+
+.trade-window
+{
+    display: inline-flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 2vh;
+}
+
+.input-in
+{
+    background-color: #ffb7ba;
+    border-radius: 20px;
+    border: 0px;
+    text-align: center;
+    outline: none;
+    color: white;
+    width: 40%;
+    font-size: 20px;
+}
+
+.input-out
+{
+    background-color: #ffb7ba;
+    border-radius: 20px;
+    border: 0px;
+    text-align: center;
+    width: 40%;
+    color: white;
+    font-size: 20px;
+    outline: none;
+}
+
+.input-in::placeholder
+{
+    font-size: 20px;
+}
+
+.input-out::placeholder
+{
+    font-size: 20px;
+}
+
+.trade-button
+{
+    margin-top: 10vh;
+    background-color: #ffb7ba;
+    border-radius: 40px;
+    border: 0px;
+    padding-left: 50px;
+    font-weight: 500;
+    padding-right: 50px;
+    font-size: 60px;
+}

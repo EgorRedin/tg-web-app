@@ -1,0 +1,124 @@
+.main-container
+{
+    background-color: red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.hexagon {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 75px; 
+    background-color: #ffb7ba;
+    margin: 50px 0; 
+  }
+  
+  .hexagon::before,
+  .hexagon::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 125px solid transparent;
+    border-right: 125px solid transparent;
+  }
+  
+  .hexagon::before {
+    bottom: 100%;
+    border-bottom: 25px solid #ffb7ba; 
+  }
+  
+  .hexagon::after {
+    top: 100%;
+    border-top: 25px solid #ffb7ba; 
+  }
+
+.buttons-container
+{
+    margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 90%;
+}
+
+.button-item
+{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background-color: #ffb7ba;
+    border-radius: 20px;
+    border: 0px;
+}
+
+.img-button
+{
+    width: 40px;
+    height: 40px;
+}
+
+.p-button
+{
+    font-size: 14px;
+    font-weight: 700;
+    word-wrap: break-word;
+    letter-spacing: 1px;
+}
+  
+.balance
+{
+    font-size: 70px;
+    font-weight: 400;
+    color: white;
+    overflow-x: auto;
+    width: 70%;
+    text-align: right;
+}
+
+.clicker
+{
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
+}
+
+.clicker:active
+{
+    transform: scale(0.98);
+}
+
+.balance-container
+{
+    display: flex;
+    justify-content: right;
+    width: 58%;
+}
+
+.balance-img
+{
+    width: 42%;
+    justify-content: right;
+    display: flex;
+    padding-right: 2vw;
+}
+
+.image-balance
+{
+    position: relative;
+    right: 1px;
+    
+}
