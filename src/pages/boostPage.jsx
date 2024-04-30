@@ -1,11 +1,17 @@
 import "../styles/boostPage.css"
 import rocket from "../imgs/rocket.png"
 import robot from "../imgs/robot.png"
+import back from "../imgs/back_arrow.png";
+import { useNavigate } from "react-router-dom";
 
 function BoostPage()
 {
+    const navigate = useNavigate()
     return(
         <div className="boost-container">
+            <div className="back-container" onClick={() => navigate("/")}>
+                <img alt="back arrow" src={back}/>
+            </div>
             <div className="header-container">
                 <h1>Boost</h1>
                 <img className="img-header" src={rocket} alt="rocket"/>

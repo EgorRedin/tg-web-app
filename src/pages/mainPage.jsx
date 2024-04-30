@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import "../styles/mainPage.css"
-import star from "../imgs/star.png"
-import map from "../imgs/world-map.png"
-import rocket from "../imgs/rocket.png"
-import dollar from "../imgs/dollar.png"
+import "../styles/mainPage.css";
+import star from "../imgs/star.png";
+import map from "../imgs/world-map.png";
+import rocket from "../imgs/rocket.png";
+import dollar from "../imgs/dollar.png";
 import { useNavigate } from "react-router-dom";
 
 
 function MainPage()
 {
-    const [balance, setBalance] = useState(10)
+    const [balance, setBalance] = useState(0)
     const navigate = useNavigate()
 
     const navigateToTg = () =>
     {
-               
+
     }
     
     return(
