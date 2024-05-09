@@ -1,68 +1,46 @@
-import attempt
-import configurable_doc
-import logging
-import asyncio
-from aiogram import Dispatcher, Bot, Router, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters import CommandStart
-from WalletPay import AsyncWalletPayAPI
-import queries
-from config_reader import config
+from queries import AsyncORM
+import socketio
+import uvicorn
+from fastapi import FastAPI
 
 
-router = Router()
-api = AsyncWalletPayAPI(api_key=configurable_doc.WALLET_TOKEN)
-
-async def order_handler(order_id: str):
-    while True:
-        # Get order preview
-        order_preview = await api.get_order_preview(order_id=order_id)
-
-        # Check if the order is paid
-        if order_preview.status == "PAID":
-            print("Order has been paid!")
-        else:
-            print("Order is not paid yet.")
-            await asyncio.sleep(20)
+app = FastAPI()
+sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
+socket_app = socketio.ASGIApp(sio)
+app.mount("/", socket_app)
 
 
-async def main():
-    # log
-    logging.basicConfig(level=logging.INFO)
-    # init
-    bot = Bot(token=configurable_doc.BOT_TOKEN)
-    dp = Dispatcher()
-    dp.include_router(attempt.router)
+@sio.on("init_user")
+async def connection(sid, data):
+    user_id = data.get("userID")
+    user = await AsyncORM.get_user(user_id)
+    print("ЭТо юхер", user)
+    if user:
+        ser_user = user.__dict__
+        del ser_user["_sa_instance_state"]
+        await sio.emit("get_user", ser_user)
+    else:
+        new_user = {
+            "id": user_id,
+            "balance": 0,
+            "auto_miner": 0
+        }
+        await AsyncORM.insert_user(user_id)
+        await sio.emit("get_user", new_user)
 
 
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+@sio.on("click")
+async def handle_clicks(sid, data: dict):
+    user_id = data.get("userID")
+    clicks = data.get("clicks")
+    print(data)
+    await AsyncORM.update_balance(user_id, clicks)
+    user = await AsyncORM.get_user(user_id)
+    ser_user = user.__dict__
+    del ser_user["_sa_instance_state"]
+    await sio.emit("get_user", ser_user)
 
 
-@router.message(CommandStart())
-@router.callback_query(F.data == "main_page")
-async def start(message: Message | CallbackQuery):
-    await queries.AsyncORM.create_table()
-    order = await api.create_order(
-        amount=0.01,
-        currency_code="TON",
-        description="Test Order",
-        external_id="1234534536",
-        timeout_seconds=1200,
-        customer_telegram_user_id=str(message.from_user.id)
-    )
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Pay", url=order.direct_pay_link
-                )
-            ]
-        ]
-    )
-    await message.answer(f'Link: {order.direct_pay_link}', reply_markup = keyboard)
-    asyncio.create_task(order_handler(str(order.id)))
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)
 
-
-if __name__ == '__main__':
-    asyncio.run(main())
