@@ -45,10 +45,19 @@ async def handle_clicks(sid, data: dict):
     await sio.emit("get_user", ser_user)
 
 
+@sio.on("single_click")
+async def handle_single(sid, user_id):
+    """
+    тут отправка на редис к юзеру по user_id
+    """
+    pass
+
+
 @sio.on("disconnect")
 async def disconnect(sid):
     if sid in connections.keys():
         print(f"Сид при дисконекте {sid}")
+
 
 
 if __name__ == "__main__":
