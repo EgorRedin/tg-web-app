@@ -35,8 +35,15 @@
     text-align: center;
     outline: none;
     color: white;
+    -webkit-appearance: none;
     width: 40%;
     font-size: 20px;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; 
+    margin: 0; 
 }
 
 .input-out

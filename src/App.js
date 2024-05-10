@@ -13,7 +13,6 @@ function App() {
   useEffect(() =>
   {
     tg.ready();
-    console.log("Что это за дерьмо");
   }
   , [])
 
