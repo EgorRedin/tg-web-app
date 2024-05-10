@@ -6,8 +6,6 @@ from redis import asyncio as aioredis
 
 
 r = aioredis.Redis(host='localhost', port=6379, decode_responses=True)
-
-
 app = FastAPI()
 sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
 socket_app = socketio.ASGIApp(sio)
@@ -18,11 +16,9 @@ connections = {}
 
 @sio.on("init_user")
 async def connection(sid, data):
-    print(f"Сид конект {sid}")
     user_id = data.get("userID")
     connections[sid] = user_id
     user = await AsyncORM.get_user(user_id)
-    print("ЭТо юзер", user)
     if user:
         await r.set(user_id, user.balance)
         ser_user = user.__dict__
@@ -41,7 +37,6 @@ async def connection(sid, data):
 
 @sio.on("click")
 async def handle_clicks(sid, data: dict):
-    print(f'Сид при кликах {sid}')
     user_id = data.get("userID")
     clicks = data.get("clicks")
     await AsyncORM.update_balance(user_id, clicks)
@@ -54,7 +49,6 @@ async def handle_clicks(sid, data: dict):
 @sio.on("single_click")
 async def handle_single(sid, user_id):
     value = await r.get(user_id)
-    print(f"Синг клик {value}")
     await r.set(user_id, int(value) + 1)
 
 
@@ -63,7 +57,6 @@ async def disconnect(sid):
     if sid in connections.keys():
         curr_balance = int(await r.get(connections[sid]))
         user = await AsyncORM.get_user(connections[sid])
-        print(f"Баланс из БД: {user.balance}, Баланс Reddis: {curr_balance}")
         if user.balance < curr_balance:
             await AsyncORM.update_balance(connections[sid], curr_balance - user.balance)
         await r.delete(connections[sid])
@@ -71,4 +64,3 @@ async def disconnect(sid):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
-
