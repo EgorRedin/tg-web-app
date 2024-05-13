@@ -14,7 +14,7 @@ class AsyncORM:
     @staticmethod
     async def insert_user(tg_id: int):
         async with session_factory() as session:
-            user = User(id=tg_id, balance=0, auto_miner=0)
+            user = User(id=tg_id, balance=0, auto_miner=0, click_size=1)
             session.add(user)
             await session.commit()
 

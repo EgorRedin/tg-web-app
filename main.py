@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from redis import asyncio as aioredis
 
 
-r = aioredis.Redis(host='localhost', port=6379, decode_responses=True)
+r = aioredis.Redis(host='redis', port=6379, decode_responses=True)
 app = FastAPI()
 sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
 socket_app = socketio.ASGIApp(sio)
@@ -29,7 +29,8 @@ async def connection(sid, data):
         new_user = {
             "id": user_id,
             "balance": 0,
-            "auto_miner": 0
+            "auto_miner": 0,
+            "click_size": 1
         }
         await AsyncORM.insert_user(user_id)
         await sio.emit("get_user", new_user)
@@ -47,9 +48,11 @@ async def handle_clicks(sid, data: dict):
 
 
 @sio.on("single_click")
-async def handle_single(sid, user_id):
+async def handle_single(sid, data: dict):
+    user_id = data.get("userID")
+    click_size = int(data.get("clickSize"))
     value = await r.get(user_id)
-    await r.set(user_id, int(value) + 1)
+    await r.set(user_id, int(value) + int(click_size))
 
 
 @sio.on("disconnect")
@@ -63,4 +66,4 @@ async def disconnect(sid):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=80)
