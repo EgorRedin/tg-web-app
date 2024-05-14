@@ -4,12 +4,12 @@ import robot from "../imgs/robot.png"
 import back from "../imgs/back_arrow.png";
 import { useNavigate } from "react-router-dom";
 import { useTelegram } from "../hooks/useTelegram";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { SocketContext } from "../context/SocketContext";
 
 function BoostPage()
 {
-    const {user, socket} = useContext(SocketContext);
+    const {socket, updateUser} = useContext(SocketContext);
     const {userTg} = useTelegram();
     const navigate = useNavigate();
 
@@ -17,6 +17,12 @@ function BoostPage()
     {
         socket.emit("update_click", userTg.id);
     }
+
+    useEffect(() =>{
+        socket.on("get_user", (data) => {
+            updateUser(data);
+        });
+    })
 
     return(
         <div className="boost-container">

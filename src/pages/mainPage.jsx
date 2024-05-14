@@ -12,21 +12,32 @@ import { SocketContext } from "../context/SocketContext";
 function MainPage()
 {
 
-    const {user, socket} = useContext(SocketContext); 
+    const {user, socket, updateUser} = useContext(SocketContext); 
     const navigate = useNavigate();
     const {userTg, onClose} = useTelegram();
     const [balance, setBalance] = useState(0);
     const [startBalance, setStart] = useState(0);
     const balanceRef = useRef(balance);
     const startRef = useRef(startBalance);
+    const [clickSizeP, setClickSize] = useState(1);
     
+
+    useEffect(() =>
+    {
+        socket.on("get_user", (data) =>
+        {
+            updateUser(data);
+        })
+    }, [])
+
     useEffect(() => {
         if (user) {
           setBalance(user.balance);
           setStart(user.balance);
+          setClickSize(user.click_size)
         }
       }, [user]);
-
+ 
     useEffect(() =>
     {
         balanceRef.current = balance
@@ -49,8 +60,15 @@ function MainPage()
     
     const SingleClick = () =>
     {
-        setBalance((prevBalance) => (prevBalance + user.click_size));
-        socket.emit("single_click", {userID: userTg.id, clickSize: user.click_size});
+        setBalance((prevBalance) => (prevBalance + clickSizeP));
+        socket.emit("single_click", {userID: userTg.id, clickSize: clickSizeP});
+    }
+
+    const handleBoost = () =>
+    {
+        console.log(balanceRef.current, startRef.current)
+        socket.emit("click", {userID: userTg.id, clicks: (balanceRef.current - startRef.current)});
+        navigate('/boost');
     }
 
     return(
@@ -67,7 +85,7 @@ function MainPage()
                 <img  className="img-button" src={map} alt="map"/>
                 <p className="p-button">Tg</p>
             </button>
-            <button className="button-item" onClick={() => navigate('/boost')}>
+            <button className="button-item" onClick={() => handleBoost()}>
                 <img className="img-button" src={rocket} alt="rocket"/>
                 <p className="p-button">Boost</p>
             </button>

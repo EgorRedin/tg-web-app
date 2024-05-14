@@ -1,28 +1,29 @@
 import React, {createContext, useState, useEffect} from "react";
 import io from "socket.io-client";
+import { useTelegram } from "../hooks/useTelegram";
 
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => 
 {
     const [user, setUser] = useState(null);
-    const socket = io("https://147.45.187.204/");
+    const socket = io.connect("https://147.45.187.204/");
+    const {userTg} = useTelegram() 
 
     useEffect(() =>
     {
         socket.on("connect", () =>
         {
-            socket.emit("init_user", {userID: user.id});
+            socket.emit("init_user", {userID: userTg.id});
         });
-        
-        socket.on("get_user", () =>
-        {
-            setUser(user);
-        })
-    })
+    }, [])
+
+    const updateUser = (newUserData) => {
+        setUser(newUserData);
+    };
 
     return (
-        <SocketContext.Provider value={{ user, socket }}>
+        <SocketContext.Provider value={{ user, socket, updateUser }}>
           {children}
         </SocketContext.Provider>
       );
