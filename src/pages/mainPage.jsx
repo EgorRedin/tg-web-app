@@ -5,8 +5,9 @@ import map from "../imgs/world-map.png";
 import rocket from "../imgs/rocket.png";
 import dollar from "../imgs/dollar.png";
 import { useNavigate } from "react-router-dom";
-import {useTelegram} from "../hooks/useTelegram"
-import { SocketContext } from "../Context/SocketContext"; 
+import {useTelegram} from "../hooks/useTelegram";
+import { SocketContext } from "../context/SocketContext";
+
 
 function MainPage()
 {
@@ -14,8 +15,8 @@ function MainPage()
     const {user, socket} = useContext(SocketContext); 
     const navigate = useNavigate();
     const {userTg, onClose} = useTelegram();
-    const [balance, setBalance] = useState(user.balance);
-    const [startBalance, setStart] = useState(user.balance);
+    const [balance, setBalance] = useState(0);
+    const [startBalance, setStart] = useState(0);
     const balanceRef = useRef(balance);
     const startRef = useRef(startBalance);
     

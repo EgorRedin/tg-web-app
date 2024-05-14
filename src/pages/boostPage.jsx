@@ -3,9 +3,9 @@ import rocket from "../imgs/rocket.png"
 import robot from "../imgs/robot.png"
 import back from "../imgs/back_arrow.png";
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../Context/SocketContext";
 import { useTelegram } from "../hooks/useTelegram";
 import { useContext } from "react";
+import { SocketContext } from "../context/SocketContext";
 
 function BoostPage()
 {

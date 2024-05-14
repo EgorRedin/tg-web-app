@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import { SocketProvider } from '.Context/SocketProvider';
+import { SocketProvider } from './context/SocketContext';
 import MainPage from './pages/mainPage';
 import BoostPage from './pages/boostPage';
 import TradePage from './pages/tradePage';
