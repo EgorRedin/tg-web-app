@@ -23,7 +23,7 @@ async def connection(sid, data):
         await r.set(user_id, user.balance)
         ser_user = user.__dict__
         del ser_user["_sa_instance_state"]
-        await sio.emit("get_user", ser_user)
+        await sio.emit("get_user", ser_user, room=sid)
     else:
         await r.set(user_id, 0)
         new_user = {
@@ -33,7 +33,7 @@ async def connection(sid, data):
             "click_size": 1
         }
         await AsyncORM.insert_user(user_id)
-        await sio.emit("get_user", new_user)
+        await sio.emit("get_user", new_user, room=sid)
 
 
 @sio.on("click")
@@ -44,7 +44,7 @@ async def handle_clicks(sid, data: dict):
     user = await AsyncORM.get_user(user_id)
     ser_user = user.__dict__
     del ser_user["_sa_instance_state"]
-    await sio.emit("get_user", ser_user)
+    await sio.emit("get_user", ser_user, room=sid)
 
 
 @sio.on("single_click")
