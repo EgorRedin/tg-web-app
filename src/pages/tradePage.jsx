@@ -1,11 +1,13 @@
-import { useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import dollar from "../imgs/dollar.png"
 import "../styles/tradePage.css"
 import back from "../imgs/back_arrow.png";
 import { useNavigate } from "react-router-dom";
+import { SocketContext } from "../context/SocketContext";
 
 function TradePage()
 {
+    const {socket, updateUser} = useContext(SocketContext);
     const [duocoins, setDoucoins] = useState("");
     const [coins, setCoins] = useState("")
     const changeText = (e) =>
@@ -14,6 +16,13 @@ function TradePage()
         setDoucoins(parseFloat(e.target.value) / 1000.0);
     }
     const navigate = useNavigate();
+
+    useEffect(() =>{
+        socket.on("get_user", (data) =>
+        {
+            updateUser(data);
+        })
+    }, [])
 
     return(
         <div className="trade-container">

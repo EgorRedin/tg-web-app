@@ -66,9 +66,14 @@ function MainPage()
 
     const handleBoost = () =>
     {
-        console.log(balanceRef.current, startRef.current)
         socket.emit("click", {userID: userTg.id, clicks: (balanceRef.current - startRef.current)});
         navigate('/boost');
+    }
+
+    const handleTrade = () =>
+    {
+        socket.emit("click", {userID: userTg.id, clicks: (balanceRef.current - startRef.current)});
+        navigate('/trade');
     }
 
     return(
@@ -89,7 +94,7 @@ function MainPage()
                 <img className="img-button" src={rocket} alt="rocket"/>
                 <p className="p-button">Boost</p>
             </button>
-            <button className="button-item" onClick={() => navigate('/trade')}>
+            <button className="button-item" onClick={() => handleTrade()}>
                 <img className="img-button" src={dollar} alt="dollar"/>
                 <p className="p-button">Trade</p>
             </button>
