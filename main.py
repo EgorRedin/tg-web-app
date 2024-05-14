@@ -20,12 +20,12 @@ async def connection(sid, data):
     connections[sid] = user_id
     user = await AsyncORM.get_user(user_id)
     if user:
-        await r.set(user_id, user.balance)
+        await r.hset(user_id, mapping={"balance": user.balance, "click_size": user.click_size})
         ser_user = user.__dict__
         del ser_user["_sa_instance_state"]
         await sio.emit("get_user", ser_user, room=sid)
     else:
-        await r.set(user_id, 0)
+        await r.hset(user_id, mapping={"balance": 0, "click_size": 1})
         new_user = {
             "id": user_id,
             "balance": 0,
@@ -51,8 +51,23 @@ async def handle_clicks(sid, data: dict):
 async def handle_single(sid, data: dict):
     user_id = data.get("userID")
     click_size = int(data.get("clickSize"))
-    value = await r.get(user_id)
-    await r.set(user_id, int(value) + int(click_size))
+    value = await r.hgetall(user_id)
+    if click_size != value["click_size"]:
+        user = await AsyncORM.get_user(user_id)
+        value["click_size"] = user.click_size
+        value["balance"] += value["click_size"]
+        await r.hset(user_id, mapping=value)
+    else:
+        value["balance"] += value["click_size"]
+        await r.hset(user_id, mapping=value)
+
+
+@sio.on("update_click")
+async def handle_size(sid, user_id):
+    updated_user = await AsyncORM.update_click_size(user_id)
+    ser_user = updated_user.__dict__
+    del ser_user["_sa_instance_state"]
+    await sio.emit("init_user", ser_user, room=sid)
 
 
 @sio.on("disconnect")
