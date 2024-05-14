@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "../styles/mainPage.css";
 import star from "../imgs/star.png";
 import map from "../imgs/world-map.png";
@@ -6,32 +6,29 @@ import rocket from "../imgs/rocket.png";
 import dollar from "../imgs/dollar.png";
 import { useNavigate } from "react-router-dom";
 import {useTelegram} from "../hooks/useTelegram"
-import io from 'socket.io-client'
-
-let socket = null;
-
-function getSocket()
-{
-    if(socket === null)
-    {
-        socket = io.connect("http://localhost:8000/");
-    }
-    return socket;
-}
+import { SocketContext } from "../Context/SocketContext"; 
 
 function MainPage()
 {
-    const [balance, setBalance] = useState(0);
+
+    const {user, socket} = useContext(SocketContext); 
     const navigate = useNavigate();
-    const [startBalance, setStart] = useState(0);
-    const {user, onClose, tg} = useTelegram();
+    const {userTg, onClose} = useTelegram();
+    const [balance, setBalance] = useState(user.balance);
+    const [startBalance, setStart] = useState(user.balance);
     const balanceRef = useRef(balance);
     const startRef = useRef(startBalance);
-    const socket = getSocket()
+    
+    useEffect(() => {
+        if (user) {
+          setBalance(user.balance);
+          setStart(user.balance);
+        }
+      }, [user]);
 
     useEffect(() =>
     {
-        balanceRef.current = balance;
+        balanceRef.current = balance
     }, [balance])
 
     useEffect(() =>
@@ -41,24 +38,8 @@ function MainPage()
 
     useEffect(() =>
     {
-        socket.on("connect", () => {
-            socket.emit("init_user", {userID: user.id})
-          });
-        
-        socket.on("get_user", (data) => {
-            setStart(data.balance);
-            setBalance(data.balance);
-            }
-        )
-
-        tg.ready()
-    }, []);
-
-
-    useEffect(() =>
-    {
         const interval = setInterval(() => {
-            socket.emit("click", {userID: user.id, clicks: (balanceRef.current - startRef.current)})
+            socket.emit("click", {userID: userTg.id, clicks: (balanceRef.current - startRef.current)})
         }, 10000)
 
         return () =>
@@ -67,8 +48,8 @@ function MainPage()
     
     const SingleClick = () =>
     {
-        setBalance((prevBalance) => (prevBalance + 1));
-        socket.emit("single_click", user.id);
+        setBalance((prevBalance) => (prevBalance + user.click_size));
+        socket.emit("single_click", {userID: userTg.id, clickSize: user.click_size});
     }
 
     return(
