@@ -51,7 +51,7 @@ class AsyncORM:
             await session.commit()
 
     @staticmethod
-    async def update_auto_miner(tg_id: int, value):
+    async def update_auto_miner(tg_id: int, value: int):
         async with session_factory() as session:
             query = select(User).where(User.id == tg_id)
             res = await session.execute(query)
