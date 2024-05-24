@@ -2,7 +2,7 @@ import datetime
 
 from database_init import Base
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger
+from sqlalchemy import BigInteger, text
 
 
 class User(Base):
@@ -11,4 +11,4 @@ class User(Base):
     auto_miner: Mapped[datetime.datetime] = mapped_column(server_default=None)
     balance: Mapped[int]
     click_size: Mapped[int]
-    last_enter: Mapped[datetime.datetime] = mapped_column(server_default=None)
+    last_enter: Mapped[datetime.datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
