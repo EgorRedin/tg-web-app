@@ -5,7 +5,8 @@ WORKDIR /app
 COPY db_create.py .
 COPY requirements.txt .
 COPY  database_init.py models.py config.py queries.py .env ./
+COPY main.py .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "db_create.py"]
+CMD python db_create.py && python main.py

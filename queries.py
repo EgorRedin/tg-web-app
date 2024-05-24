@@ -1,3 +1,5 @@
+import datetime
+
 from database_init import engine, Base, session_factory
 from models import User
 from sqlalchemy import select
@@ -46,4 +48,22 @@ class AsyncORM:
                 return
             result.click_size += 5
             result.balance -= 5
+            await session.commit()
+
+    @staticmethod
+    async def update_auto_miner(tg_id: int, value):
+        async with session_factory() as session:
+            query = select(User).where(User.id == tg_id)
+            res = await session.execute(query)
+            result = res.scalars().first()
+            result.auto_miner = value
+            await session.commit()
+
+    @staticmethod
+    async def update_last_enter(tg_id: int):
+        async with session_factory() as session:
+            query = select(User).where(User.id == tg_id)
+            res = await session.execute(query)
+            result = res.scalars().first()
+            result.last_enter = datetime.datetime.now(datetime.timezone.utc)
             await session.commit()
