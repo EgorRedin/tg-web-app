@@ -65,5 +65,5 @@ class AsyncORM:
             query = select(User).where(User.id == tg_id)
             res = await session.execute(query)
             result = res.scalars().first()
-            result.last_enter = datetime.datetime.now(datetime.timezone.utc)
+            result.last_enter = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
             await session.commit()

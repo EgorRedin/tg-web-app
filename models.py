@@ -2,7 +2,7 @@ import datetime
 
 from database_init import Base
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger, func
+from sqlalchemy import BigInteger, func, DateTime
 
 
 class User(Base):
@@ -11,4 +11,4 @@ class User(Base):
     auto_miner: Mapped[int]
     balance: Mapped[int]
     click_size: Mapped[int]
-    last_enter: Mapped[datetime.datetime] = mapped_column(nullable=True)
+    last_enter: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)

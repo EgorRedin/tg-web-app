@@ -4,10 +4,12 @@ import socketio
 import uvicorn
 from fastapi import FastAPI
 from redis import asyncio as aioredis
-
+import logging
 
 r = aioredis.Redis(host='redis', port=6379, decode_responses=True)
 app = FastAPI()
+logger = logging.getLogger("uvicorn.error")
+logger.setLevel(logging.DEBUG)
 sio = socketio.AsyncServer(cors_allowed_origins='*', async_mode='asgi')
 socket_app = socketio.ASGIApp(sio)
 app.mount("/", socket_app)
@@ -22,13 +24,14 @@ async def connection(sid, data):
     if user:
         await r.hset(str(user_id), mapping={"balance": user.balance, "click_size": user.click_size})
         ser_user = user.__dict__
-        if ser_user["auto_miner"] >= 0:
-            time_gap = int((datetime.now(timezone.utc) - ser_user["last_enter"]).total_seconds())
+        if ser_user["auto_miner"] > 0:
+            logger.debug(f"С БД {ser_user["last_enter"]}\nСервер: {datetime.now(timezone.utc)}")
+            time_gap = int((datetime.now(timezone.utc).replace(tzinfo=None) - ser_user["last_enter"]).total_seconds())
             coins_left = ser_user["auto_miner"] - time_gap if ser_user["auto_miner"] - time_gap > 0 else 0
             if time_gap > 60:
                 await AsyncORM.update_auto_miner(user_id, coins_left)
                 await AsyncORM.update_balance(user_id, ser_user["auto_miner"] - coins_left)
-                ser_user["balance"] += time_gap
+                ser_user["balance"] += (ser_user["auto_miner"] - coins_left)
         del ser_user["_sa_instance_state"]
         del ser_user["last_enter"]
         await sio.emit("get_user", ser_user, to=sid)
@@ -53,6 +56,7 @@ async def handle_clicks(sid, data: dict):
         await AsyncORM.update_balance(user_id, clicks)
         user.balance += clicks
     ser_user = user.__dict__
+    del ser_user["last_enter"]
     del ser_user["_sa_instance_state"]
     await sio.emit("get_user", ser_user, to=sid)
 
@@ -83,6 +87,7 @@ async def handle_size(sid, user_id):
     await AsyncORM.update_click_size(user_id)
     updated_user = await AsyncORM.get_user(user_id)
     ser_user = updated_user.__dict__
+    del ser_user["last_enter"]
     del ser_user["_sa_instance_state"]
     await sio.emit("get_user", ser_user, to=sid)
 
