@@ -67,3 +67,12 @@ class AsyncORM:
             result = res.scalars().first()
             result.last_enter = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
             await session.commit()
+
+    @staticmethod
+    async def update_earn_bonus(tg_id: int):
+        async with session_factory() as session:
+            query = select(User).where(User.id == tg_id)
+            res = await session.execute(query)
+            result = res.scalars().first()
+            result.earn_bonus = True
+            await session.commit()

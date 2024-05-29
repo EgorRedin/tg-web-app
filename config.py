@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import SecretStr
 
 
 class Settings(BaseSettings):
@@ -6,6 +7,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8"
     )
+    token: SecretStr
     DB_HOST: str
     DB_PORT: int
     DB_USER: str
