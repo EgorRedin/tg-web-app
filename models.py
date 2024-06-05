@@ -12,4 +12,4 @@ class User(Base):
     balance: Mapped[int]
     click_size: Mapped[int]
     last_enter: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=True)
-    earn_bonus: Mapped[bool]
+    earn_bonus: Mapped[bool] = mapped_column(default=False)
