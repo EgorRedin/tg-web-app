@@ -24,6 +24,11 @@ function BoostPage()
         });
     })
 
+    const handleAutoMiner = () =>
+    {
+        socket.emit("update_auto_miner", userTg.id);
+    };
+
     return(
         <div className="boost-container">
             <div className="back-container" onClick={() => navigate("/")}>
@@ -41,7 +46,7 @@ function BoostPage()
                     Купить "+5" монет к каждому нажатию
                 </p>
             </div>
-            <div className="improve-container">
+            <div className="improve-container" onClick={() => handleAutoMiner()}>
                 <div className="button-item">
                     <img src={robot} style={{width: "65px", height: "65px"}}/>
                 </div>

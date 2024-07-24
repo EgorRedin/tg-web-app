@@ -14,7 +14,7 @@ function MainPage()
 
     const {user, socket, updateUser} = useContext(SocketContext); 
     const navigate = useNavigate();
-    const {userTg, onClose} = useTelegram();
+    const { userTg } = useTelegram();
     const [balance, setBalance] = useState(0);
     const [startBalance, setStart] = useState(0);
     const balanceRef = useRef(balance);
@@ -57,6 +57,7 @@ function MainPage()
         return () =>
         clearInterval(interval);
     }, [])
+
     
     const SingleClick = () =>
     {
@@ -76,17 +77,29 @@ function MainPage()
         navigate('/trade');
     }
 
+    const redirectTg = () =>
+    {
+        const newWindow = window.open("https://t.me/Duocoin_Comm", '_blank');
+        if(newWindow)
+        {
+            newWindow.focus();
+        } else
+        {
+            alert("Allow popups");
+        }
+    }
+
     return(
     <div className="main-container">
-        <div className="hexagon">
-            <p className="balance">{balance}</p>
+        <div className="balance-keeper">
+            {user ? (<p className="balance">{balance}</p>) : (<p>Загрузка...</p>)}
             <img className="image-balance" style={{width: "55px", height: "55px"}} src={star} alt="star"/>
         </div>
         <div className="img-container">
             <img src={star} alt="star" className="clicker" onClick={() => SingleClick()}/>
         </div>
         <div className="buttons-container">
-            <button className="button-item" onClick={() => onClose()}>
+            <button className="button-item" onClick={() => redirectTg()}>
                 <img  className="img-button" src={map} alt="map"/>
                 <p className="p-button">Tg</p>
             </button>
@@ -94,10 +107,10 @@ function MainPage()
                 <img className="img-button" src={rocket} alt="rocket"/>
                 <p className="p-button">Boost</p>
             </button>
-            <button className="button-item" onClick={() => handleTrade()}>
-                <img className="img-button" src={dollar} alt="dollar"/>
-                <p className="p-button">Trade</p>
-            </button>
+            {/* <button className="button-item" onClick={() => handleTrade()}> */}
+                {/* <img className="img-button" src={dollar} alt="dollar"/> */}
+                {/* <p className="p-button">Trade</p> */}
+            {/* </button> */}
         </div>
     </div>
     )

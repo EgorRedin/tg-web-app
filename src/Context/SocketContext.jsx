@@ -7,7 +7,7 @@ export const SocketContext = createContext();
 export const SocketProvider = ({ children }) => 
 {
     const [user, setUser] = useState(null);
-    const socket = io.connect("https://147.45.187.204/");
+    const socket = io.connect("https://duo-coin.ru/");
     const {userTg} = useTelegram() 
 
     useEffect(() =>
@@ -18,9 +18,11 @@ export const SocketProvider = ({ children }) =>
         });
     }, [])
 
+
     const updateUser = (newUserData) => {
         setUser(newUserData);
     };
+
 
     return (
         <SocketContext.Provider value={{ user, socket, updateUser }}>

@@ -9,6 +9,15 @@
     width: 100vw;
 }
 
+.balance-keeper
+{
+    display: inline-flex;
+    width: 100%;
+    margin-bottom: 100px;
+    justify-content: center;
+    align-items: center;
+}
+
 .hexagon {
     position: relative;
     display: flex;
@@ -85,8 +94,6 @@
     font-weight: 400;
     color: white;
     overflow-x: auto;
-    width: 70%;
-    text-align: right;
 }
 
 .clicker
